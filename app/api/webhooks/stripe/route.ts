@@ -35,20 +35,22 @@ export async function POST(req: NextRequest) {
     }
 
     case 'invoice.payment_succeeded': {
-      const invoice = event.data.object as Stripe.Invoice
-      await supabase.from('subscriptions')
-        .update({ status: 'active', updated_at: new Date().toISOString() })
-        .eq('stripe_sub_id', invoice.subscription)
-      break
-    }
+  const invoice = event.data.object as Stripe.Invoice
+  const subId = (invoice as any).subscription
+  await supabase.from('subscriptions')
+    .update({ status: 'active', updated_at: new Date().toISOString() })
+    .eq('stripe_sub_id', subId)
+  break
+}
 
-    case 'invoice.payment_failed': {
-      const invoice = event.data.object as Stripe.Invoice
-      await supabase.from('subscriptions')
-        .update({ status: 'past_due' })
-        .eq('stripe_sub_id', invoice.subscription)
-      break
-    }
+case 'invoice.payment_failed': {
+  const invoice = event.data.object as Stripe.Invoice
+  const subId = (invoice as any).subscription
+  await supabase.from('subscriptions')
+    .update({ status: 'past_due' })
+    .eq('stripe_sub_id', subId)
+  break
+}
 
     case 'customer.subscription.deleted': {
       const sub = event.data.object as Stripe.Subscription
