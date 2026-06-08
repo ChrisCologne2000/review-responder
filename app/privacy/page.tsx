@@ -19,7 +19,7 @@ export default function Privacy() {
         <h1>Datenschutzerklärung</h1>
 
         <h2>1. Verantwortlicher</h2>
-        <p>Vorname Nachname, Straße, PLZ Ort, E-Mail: deine@email.de</p>
+        <p>Vosit e.K., Mittelstraße 11-13, 40765 Monheim am Rhein, E-Mail: office@vosit.com</p>
 
         <h2>2. Welche Daten wir erheben</h2>
         <ul>

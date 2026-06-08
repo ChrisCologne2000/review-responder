@@ -37,7 +37,7 @@ export default function ReviewDashboard() {
 
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: 800, margin: '40px auto', padding: '0 20px' }}>
-      <h1 style={{ fontSize: 24, marginBottom: 8 }}>ReviewPilot Dashboard</h1>
+      <h1 style={{ fontSize: 24, marginBottom: 8 }}>AntwortBot Dashboard</h1>
       <p style={{ color: '#666', marginBottom: 24 }}>● Läuft automatisch</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 24 }}>
