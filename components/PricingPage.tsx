@@ -71,7 +71,6 @@ export default function PricingPage() {
     .divider{border:none;border-top:1px solid #1f1f1f;margin-bottom:28px}
     .features{display:flex;flex-direction:column;gap:12px}
     .feat{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:#ccc;line-height:1.5}
-    .feat.muted{color:#444}
     .trial-note{text-align:center;font-size:14px;color:#555;margin-top:40px;line-height:1.6}
   `;
 
@@ -109,8 +108,8 @@ export default function PricingPage() {
               <div className="feat"><CheckIcon/> 1 Standort</div>
               <div className="feat"><CheckIcon/> Google Business vollautomatisch</div>
               <div className="feat"><CheckIcon/> Antworten alle 4 Stunden</div>
-              <div className="feat"><CheckIcon/> Ton-Konfiguration</div>
-              <div className="feat"><CheckIcon/> Monatlicher Report</div>
+              <div className="feat"><CheckIcon/> Ton-Konfiguration (formell/locker)</div>
+              <div className="feat"><CheckIcon/> Monatlicher Bericht per E-Mail</div>
             </div>
           </div>
 
@@ -128,12 +127,12 @@ export default function PricingPage() {
             </button>
             <hr className="divider"/>
             <div className="features">
-              <div className="feat"><CheckIcon/> Bis zu 5 Standorte</div>
+              <div className="feat"><CheckIcon/> Bis zu 3 Standorte</div>
               <div className="feat"><CheckIcon/> Google Business vollautomatisch</div>
-              <div className="feat"><CheckIcon/> Antworten alle 2 Stunden</div>
-              <div className="feat"><CheckIcon/> Ton pro Standort</div>
-              <div className="feat"><CheckIcon/> Trustpilot & App Store</div>
-              <div className="feat"><CheckIcon/> Team-Zugang (3 Nutzer)</div>
+              <div className="feat"><CheckIcon/> Antworten alle 4 Stunden</div>
+              <div className="feat"><CheckIcon/> Ton pro Standort konfigurierbar</div>
+              <div className="feat"><CheckIcon/> Monatlicher Report als PDF</div>
+              <div className="feat"><CheckIcon/> Prioritäts-Support per E-Mail</div>
             </div>
           </div>
         </div>
