@@ -18,13 +18,13 @@ export default function Impressum() {
         <h1>Impressum</h1>
 
         <h2>Angaben gemäß § 5 TMG</h2>
-        <p>Vorname Nachname</p>
-        <p>Straße Hausnummer</p>
-        <p>PLZ Ort</p>
+        <p>Christopher Ossowski - Vosit e.K.</p>
+        <p>Mittelstraße 11/13</p>
+        <p>40789 Monheim am Rhein</p>
 
         <h2>Kontakt</h2>
         <p>Telefon: +49 2173 2640331</p>
-        <p>E-Mail: <a href="mailto:deine@email.de">deine@email.de</a></p>
+        <p>E-Mail: <a href="office@vosit.com">deine@email.de</a></p>
 
         <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
         <p>Vosit e.K.</p>
