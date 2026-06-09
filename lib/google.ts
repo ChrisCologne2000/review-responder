@@ -48,3 +48,20 @@ export async function replyToReview(
   )
   return res.json()
 }
+// Review Reply Status abrufen
+export async function getReviewReplyState(
+  accessToken: string,
+  reviewName: string
+) {
+  const res = await fetch(
+    `https://mybusiness.googleapis.com/v4/${reviewName}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      }
+    }
+  )
+  const data = await res.json()
+  return data.reviewReply?.state ?? null
+}

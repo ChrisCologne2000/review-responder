@@ -41,13 +41,21 @@ export async function GET(req: NextRequest) {
           conn.tone ?? 'friendly'
         )
 
-        await replyToReview(conn.access_token, review.name, reply)
+        const replyResult = await replyToReview(
+          conn.access_token,
+          review.name,
+          reply
+        )
+
+        const replyState = replyResult?.state ?? 'PENDING'
 
         await supabase.from('reply_log').insert({
           user_id: conn.user_id,
           review_id: review.name,
           reply_text: reply,
           platform: 'google_business',
+          reply_state: replyState,
+          location_name: location.business_name,
           replied_at: new Date().toISOString()
         })
 
