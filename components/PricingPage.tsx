@@ -15,23 +15,30 @@ function CheckIcon() {
   );
 }
 
-async function startCheckout(plan: string) {
-  const res = await fetch("/api/checkout", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ plan }),
-  });
-  const { url } = await res.json();
-  if (url) window.location.href = url;
-}
-
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
   async function handleCheckout(plan: string) {
-    setLoading(plan);
-    await startCheckout(plan);
+    setSelectedPlan(plan);
+    setShowEmailInput(true);
+  }
+
+  async function submitCheckout() {
+    if (!email || !selectedPlan) return;
+    setLoading(selectedPlan);
+    setShowEmailInput(false);
+
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan: selectedPlan, email }),
+    });
+    const { url } = await res.json();
+    if (url) window.location.href = url;
     setLoading(null);
   }
 
@@ -72,11 +79,44 @@ export default function PricingPage() {
     .features{display:flex;flex-direction:column;gap:12px}
     .feat{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:#ccc;line-height:1.5}
     .trial-note{text-align:center;font-size:14px;color:#555;margin-top:40px;line-height:1.6}
+    .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100}
+    .modal{background:#111;border:1px solid #333;border-radius:16px;padding:32px;width:100%;max-width:400px}
+    .modal h3{font-size:18px;font-weight:700;color:#fff;margin-bottom:8px}
+    .modal p{font-size:14px;color:#888;margin-bottom:20px;line-height:1.6}
+    .modal input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:#fff;font-size:15px;font-family:'Inter',sans-serif;margin-bottom:12px}
+    .modal input:focus{outline:none;border-color:#22c55e}
+    .modal-row{display:flex;gap:10px}
+    .btn-cancel{flex:1;padding:12px;border-radius:10px;border:1px solid #333;background:transparent;color:#888;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px}
+    .btn-submit{flex:2;padding:12px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:600}
+    .btn-submit:hover{background:#16a34a}
   `;
 
   return (
     <>
       <style>{css}</style>
+
+      {/* Email Modal */}
+      {showEmailInput && (
+        <div className="modal-overlay" onClick={() => setShowEmailInput(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>Fast geschafft!</h3>
+            <p>Gib deine E-Mail-Adresse ein um dein {selectedPlan === 'starter' ? 'Starter' : 'Pro'} Abo zu starten.</p>
+            <input
+              type="email"
+              placeholder="deine@email.de"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && submitCheckout()}
+              autoFocus
+            />
+            <div className="modal-row">
+              <button className="btn-cancel" onClick={() => setShowEmailInput(false)}>Abbrechen</button>
+              <button className="btn-submit" onClick={submitCheckout}>Weiter zu Stripe →</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="page">
         <p className="eyebrow">Pricing</p>
         <h1 className="headline">Automatische Antworten.<br/><span>Keine manuelle Arbeit.</span></h1>
