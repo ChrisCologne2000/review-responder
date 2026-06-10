@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const { businessName, googleName } = await req.json()
+    const { businessName, locationId } = await req.json()
     const supabase = createClient()
 
+    // Letzten eingeloggten User holen
     const { data: conn } = await supabase
       .from('connections')
       .select('user_id')
@@ -14,6 +15,10 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (!conn) return NextResponse.json({ error: 'Nicht eingeloggt' }, { status: 401 })
+
+    // Google Business Location Name aufbauen
+    // Format: locations/{locationId}
+    const googleName = `locations/${locationId}`
 
     await supabase.from('locations').upsert({
       user_id: conn.user_id,
