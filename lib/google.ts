@@ -25,8 +25,9 @@ export async function fetchLocations(accessToken: string) {
   const locations: { google_name: string; business_name: string }[] = []
 
   try {
+    // Account Management API
     const accountsRes = await fetch(
-      'https://mybusiness.googleapis.com/v4/accounts',
+      'https://mybusinessaccountmanagement.googleapis.com/v1/accounts',
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -34,11 +35,20 @@ export async function fetchLocations(accessToken: string) {
         }
       }
     )
+
+    const contentType = accountsRes.headers.get('content-type') ?? ''
+    if (!contentType.includes('application/json')) {
+      console.error('Accounts API non-JSON:', await accountsRes.text())
+      return locations
+    }
+
     const accountsData = await accountsRes.json()
+    console.log('Accounts response:', JSON.stringify(accountsData))
 
     for (const account of accountsData.accounts ?? []) {
+      // Business Information API für Standorte
       const locRes = await fetch(
-        `https://mybusiness.googleapis.com/v4/${account.name}/locations`,
+        `https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=name,title`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -46,11 +56,20 @@ export async function fetchLocations(accessToken: string) {
           }
         }
       )
+
+      const locContentType = locRes.headers.get('content-type') ?? ''
+      if (!locContentType.includes('application/json')) {
+        console.error('Locations API non-JSON')
+        continue
+      }
+
       const locData = await locRes.json()
+      console.log('Locations response:', JSON.stringify(locData))
+
       for (const loc of locData.locations ?? []) {
         locations.push({
           google_name: loc.name,
-          business_name: loc.locationName ?? loc.title ?? 'Unbekannt'
+          business_name: loc.title ?? loc.locationName ?? 'Unbekannt'
         })
       }
     }
@@ -72,6 +91,13 @@ export async function fetchReviews(accessToken: string, locationName: string) {
       }
     }
   )
+
+  const contentType = res.headers.get('content-type') ?? ''
+  if (!contentType.includes('application/json')) {
+    console.error('fetchReviews non-JSON response')
+    return { reviews: [] }
+  }
+
   return res.json()
 }
 
