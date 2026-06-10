@@ -25,7 +25,6 @@ export async function fetchLocations(accessToken: string) {
   const locations: { google_name: string; business_name: string }[] = []
 
   try {
-    // Account Management API
     const accountsRes = await fetch(
       'https://mybusinessaccountmanagement.googleapis.com/v1/accounts',
       {
@@ -46,7 +45,6 @@ export async function fetchLocations(accessToken: string) {
     console.log('Accounts response:', JSON.stringify(accountsData))
 
     for (const account of accountsData.accounts ?? []) {
-      // Business Information API für Standorte
       const locRes = await fetch(
         `https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=name,title`,
         {
@@ -82,23 +80,34 @@ export async function fetchLocations(accessToken: string) {
 
 // Reviews eines Standorts abrufen
 export async function fetchReviews(accessToken: string, locationName: string) {
-  const res = await fetch(
-    `https://mybusiness.googleapis.com/v4/${locationName}/reviews`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      }
+  // Beide API Formate unterstützen
+  let url: string
+
+  if (locationName.startsWith('accounts/')) {
+    // Altes Format: accounts/xxx/locations/xxx
+    url = `https://mybusiness.googleapis.com/v4/${locationName}/reviews`
+  } else {
+    // Neues Format: locations/xxx
+    url = `https://mybusiness.googleapis.com/v4/${locationName}/reviews`
+  }
+
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
     }
-  )
+  })
 
   const contentType = res.headers.get('content-type') ?? ''
   if (!contentType.includes('application/json')) {
-    console.error('fetchReviews non-JSON response')
+    const text = await res.text()
+    console.error('fetchReviews non-JSON:', text.substring(0, 200))
     return { reviews: [] }
   }
 
-  return res.json()
+  const data = await res.json()
+  console.log('Reviews response:', JSON.stringify(data).substring(0, 500))
+  return data
 }
 
 // Auf eine Bewertung antworten
@@ -107,17 +116,29 @@ export async function replyToReview(
   reviewName: string,
   comment: string
 ) {
-  const res = await fetch(
-    `https://mybusiness.googleapis.com/v4/${reviewName}/reply`,
-    {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ comment })
-    }
-  )
+  // Review Name Format bestimmen
+  let url: string
+  if (reviewName.startsWith('accounts/')) {
+    url = `https://mybusiness.googleapis.com/v4/${reviewName}/reply`
+  } else {
+    url = `https://mybusiness.googleapis.com/v4/${reviewName}/reply`
+  }
+
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ comment })
+  })
+
+  const contentType = res.headers.get('content-type') ?? ''
+  if (!contentType.includes('application/json')) {
+    console.error('replyToReview non-JSON response')
+    return { state: 'PENDING' }
+  }
+
   return res.json()
 }
 
